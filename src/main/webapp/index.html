@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+
+<style>
+.container {
+	background-image: url('../static/wall.jpg');
+	background-repeat: repeat-x;
+	background-attachment: fixed;
+}
+
+.globalCss {
+	width: 100%;
+	height: 100%;
+}
+</style>
+<head>
+<title>Ping</title>
+
+<link rel="stylesheet"
+	href="https://semantic-ui.com/dist/semantic.min.css">
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-beta1/jquery.min.js"></script>
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.7/semantic.min.js"></script>
+
+</head>
+<body id="ping" class="container">
+	<div class="ui modal pinbtn">
+		<div id="loaderDiv" class="ui large text loader">Please wait
+			.....</div>
+	</div>
+
+	<table class="globalCss">
+		<tr class="globalCss">
+			<th style="width: 70%; height: 30%;">
+				<form>
+					<div class="ui large icon input">
+						<input id="box" type="text" placeholder="Please enter Ip here">
+					</div>
+					<br> <br>
+				</form>
+				<button id="pinbtn" class="ui button" onclick="clicked()">Ping</button>
+			</th>
+			<th style="width: 30%; background: white">
+				<div id="returnValue" style="width: 100%; height: 100%;"></div>
+			</th>
+		</tr>
+	</table>
+
+	<script>
+		$(function() {
+			$("#pinbtn").click(function() {
+				$(".pinbtn").modal('show');
+			});
+			$(".pinbtn").modal({
+				closable : true
+			});
+		});
+	</script>
+
+	<script>
+		function clicked() {
+			var val = document.getElementById("box").value;
+			document.getElementById('returnValue').innerHTML = "";
+			val = val.split('.').join("-");
+
+			if (val !== "")
+				callRest(val);
+		}
+	</script>
+	<script>
+		function callRest(val) {
+
+			$(document).ready(function() {
+
+				var appUrl = window.location.href;
+
+				var url = appUrl + 'ping/' + val.replace(".", "-");
+
+				var xhr = new XMLHttpRequest();
+
+				try {
+					xhr.open("GET", url, true);
+					xhr.onreadystatechange = function() {
+						if (xhr.readyState == 4 && xhr.status == 200) {
+							var json = xhr.responseText;
+							if (json != undefined) {
+								showValues(json);
+							}
+						}
+					}
+					xhr.send();
+
+				} catch (e) {
+					console.log();
+					showValues(e.toString());
+				}
+			});
+		}
+
+		function showValues(json) {
+
+			$(".pinbtn").modal('hide');
+			
+			var val = json.split("@@@@");
+			for(var i=0; i<val.length;i++)
+			{
+				var values = val[i];
+				var label = document.createElement("label");
+				var textValue = document.createTextNode(values);
+				label.appendChild(textValue);
+				document.getElementById('returnValue').appendChild(label);
+				var br = document.createElement("br");
+			    document.getElementById('returnValue').appendChild(br);
+			}
+		}
+	</script>
+
+</body>
+</html>

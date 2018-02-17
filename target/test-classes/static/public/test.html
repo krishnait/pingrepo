@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+
+<style>
+.container{
+	background-image: url('../Desktop/wall.jpg');
+	background-repeat:repeat-x;
+    background-attachment:fixed;
+}
+.globalCss{
+	width:100%;
+	height:100%;
+}
+
+</style>
+<head>
+<title>Ping</title>
+
+	<link rel="stylesheet" href="https://semantic-ui.com/dist/semantic.min.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-beta1/jquery.min.js"></script>
+
+</head>
+<body id="ping" class= "container">
+
+	<table class="globalCss">
+	  <tr class = "globalCss">
+		<th style="width:80%;height:30%;">
+			<div class="ui large icon input">
+				<input id = "box" type="text" placeholder="Please enter Ip here">
+			</div> 
+			<br><br>
+			<button class="ui button"onclick="clicked()">Execute</button>
+		</th>
+		<th style="width:20%;background:white">
+			<div id="returnValue" style="width:100%; height:100%;">
+				
+			</div>
+		</th>
+	  </tr>
+	</table>
+
+	<script>
+		function clicked()
+		{
+			var val = document.getElementById("box").value;
+			if(val !== "")
+				callRest(val);
+		}
+	</script>
+	<script>
+	
+	function callRest(val) {
+		
+	$(document).ready(function () {
+	
+	var appUrl = window.location.href;
+	var siteMainURL = appUrl.substring(0, appUrl.indexOf('/wisdom/'));
+	var restUrl = '/execute';
+	
+	var xhr = new XMLHttpRequest();
+
+	try{
+		var open_str = siteMainURL+ restUrl + '/execute?value='+val;
+		xhr.open("GET", open_str, true);
+		xhr.onreadystatechange = function() {
+			if (xhr.readyState == 4 && xhr.status == 200) {
+				//var json = JSON.parse(xhr.responseText);
+				var json = xhr.responseText;
+				if (json != undefined) {
+					showValues(json);
+				}
+			}
+		}
+		xhr.send();
+		
+	}catch (e) {
+		console.log();
+		showValues(e.toString());
+	}
+	});	
+	}
+	
+	
+	function showValues(json){
+		document.getElementById('returnValue').innerHTML = json;
+	}
+	</script>
+
+</body>
+</html>
